@@ -16,7 +16,7 @@ Description: A package to calculate the functional extension and evenness
   of a species assemblage in trait space.
 License: GPL-2
 Encoding: UTF-8
-Depends: R (>= 4.0.4), foreach, ape, cluster, doSNOW, parallel
+Depends: R (>= 3.6.3), foreach, ape, cluster, doSNOW, parallel
 Suggests: 
     testthat,
     FD,
