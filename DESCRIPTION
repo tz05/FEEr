@@ -8,6 +8,7 @@ Authors@R: c(
   person(given="Grant M.", family="Domke", role="ctb"),
   person(given="Matthew B.", family="Russell", role="ctb"),
   person(given="Jeremy W.", family="Lichstein", role="ctb"))
+URL: https://github.com/tz05/FEE
 BugReports: https://github.com/tz05/FEE/issues
 Description: A package to calculate the functional extension and evenness 
   (FEE) index. This index measures functional diversity by evaluating the 
