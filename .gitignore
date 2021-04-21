@@ -11,3 +11,4 @@ FEE_Vignette.Rmd
 build
 .Rbuildignore
 .Rhistory
+vignettes
