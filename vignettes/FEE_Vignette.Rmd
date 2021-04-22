@@ -4,9 +4,9 @@ author: "TZ"
 date: "4/22/2021"
 output: html_document
 vignette: >
-  %\VignetteIndexEntry{FEE_Vignette}
-%\VignetteEngine{knitr::rmarkdown}
-%\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{testVign}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
