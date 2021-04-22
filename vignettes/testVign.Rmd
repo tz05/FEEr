@@ -1,39 +1,174 @@
 ---
-title: "testvign"
-author: "TZ"
-date: "4/22/2021"
+  title: "Vignette of Using FEE Package"
+author: "Tao Zhang, Grant M. Domke, Matthew B. Russell, and Jeremy W. Lichstein"
+date: "`r Sys.Date()`"
 output: html_document
+vignette: >
+  %\VignetteIndexEntry{FEE_Vignette}
+%\VignetteEngine{knitr::rmarkdown}
+%\VignetteEncoding{UTF-8}
 ---
+  
+  # Introduction
+  Functional extension and evenness (FEE) is an index to quantify functional diversity of species assemblies (communities). The FEE index presents the following key features:
+  
+  * it allows a fair comparison of functional diversity across different species richness levels;
+* it preserves the essence of single-facet indices while overcoming some of their limitations;
+* it standardizes comparisons among communities by taking into consideration the trait space of the shared species pool;
+* it has the potential to distinguish among different community assembly processes.
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+Detailed introduction of the FEE index can be found in [Zhang et al. (2021)](<https://doi.org/10.1002/ece3.7577>). This vignette demonstrates how to use the `FEE` package to calculate this index under different settings.
+
+# Data Preparation
+The major data inputs for FEE calculations are species traits and species composition in the studied communities. Here, we generate artificial data for demonstration purpose.
+```{r, message = FALSE}
+library(FEE)
+```
+```{r}
+set.seed(321)
+d_trait <- cbind(tr1 = rnorm(10, 0, 1), tr2 = rnorm(10, 3, 2))
+d_comm <- rbind(comm1 = sample(0:4, 10, replace = TRUE, prob = c(8, 4:1)),
+                comm2 = sample(0:4, 10, replace = TRUE, prob = c(8, 4:1)),
+                comm3 = sample(0:4, 10, replace = TRUE, prob = c(8, 4:1)),
+                comm4 = sample(0:4, 10, replace = TRUE),
+                comm5 = sample(0:4, 10, replace = TRUE),
+                comm6 = sample(0:4, 10, replace = TRUE))
+d_trait
+d_comm
+```
+In this example, the trait data `d_trait` contains two traits (`tr1` and `tr2`) of 10 species (row numbers of `d_trait`). The community composition data `d_comm` describes the abundance of these 10 species in six communities (`comm1` to `comm6`). In the following plot, species presented in these communities are shown as red dots in the trait space (dashed lines), where dot size indicates species abundance.
+```{r, fig.height = 2.4, fig.width = 3.6}
+par(mfrow = c(2, 3), mar = rep(0.3, 4))
+for(i in 1:6) {
+  plot(d_trait, axes = F, type = "n")
+  polygon(rbind(c(min(d_trait[,1]), min(d_trait[,2])), c(max(d_trait[,1]), min(d_trait[,2])),
+                c(max(d_trait[,1]), max(d_trait[,2])), c(min(d_trait[,1]), max(d_trait[,2]))), lty=2)
+  points(d_trait[which(d_comm[i,] > 0),], cex = 0.4*d_comm[i, which(d_comm[i,] > 0)], col = 2, pch = 19)
+  legend("topright", legend = paste0("comm", i, " "), bty = "n")
+}
 ```
 
-## R Markdown
+# Index Calculation
+The function `computeFEE` is the wrapper of FEE calculation. In its simplest form, the function only requires the above two data as inputs:
+  ```{r, results = "hide", message = FALSE}
+fee1 <- computeFEE(d_trait, d_comm)
+```
+```{r}
+fee1
+```
+Species richness of a community is often used as a measurement of biodiversity (taxonomic diversity). As a measurement of functional diversity, FEE is not necessarily correlated with species richness. Indeed, one motivation of developing FEE was to remove the possible intrinsic dependence with species richness from a functional diversity index (refer to [Zhang et al. 2021](<https://doi.org/10.1002/ece3.7577>) for details).
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-* **`what`.** Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define 1
-* **`when`.** Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define 22222222222222222222.
-
-* **`how`.**
-  I do not know how. Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define yes.
-
-  ```{r cars}
-  summary(cars)
-  ```
-
-* **'who`.**
-  Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define no.
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+The `computeNSP` function can be used to find out species richness (number of species) of the communities. The following scatter-plot indicates species richness does not align with the FEE index in our example.
+```{r, fig.width = 2, fig.height = 2}
+nsp <- computeNSP(d_comm)
+nsp
+par(mar = c(2.8, 2.8, 0.2, 0.2), mgp = c(1.8,0.5,0))
+plot(nsp, fee1, ylim = 0:1, yaxs = "i")
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+A user might consider the following parameters (and questions) in calculating the FEE index:
+  
+  *  __`abundWeighted`.__
+Do I consider abundance of the species in the calculation (default), or focus simply on species presence vs. absence (`abundWeighted = FALSE`)? 
+  *  __`dis_metric`.__
+How do I quantify the distance (or dissimilarity) between two species in trait space? In the current version, traits can be continuous or ordinal. In the function, each trait is standardized into the 0-1 range and species distances are calculated based on the standardized trait values. The function currently supports two distance metric options: `euclidean` (default) and `manhattan`. In case of single trait (i.e., 1-dimensional trait space), the two options are equivalent. Refer to `?dist` for more information about the two options.
+* __`poolBased`.__
+Do I use traits of species pool (`pool_traits`) as the prior knowledge of trait distribution (`poolBased = TRUE`), or assume no prior knowledge about species trait distribution (default)?
+  
+  Different considerations in these parameters could result in different FEE results, as indicated in the following calculation and pair-wise scatter-plots:
+  ```{r, results = "hide", message = FALSE}
+fee2 <- computeFEE(d_trait, d_comm, abundWeighted = FALSE)
+fee3 <- computeFEE(d_trait, d_comm, dis_metric = "manhattan")
+fee4 <- computeFEE(d_trait, d_comm, poolBased = TRUE)
+fee5 <- computeFEE(d_trait, d_comm, abundWeighted = FALSE, dis_metric = "manhattan")
+fee6 <- computeFEE(d_trait, d_comm, abundWeighted = FALSE, poolBased = TRUE)
+fee7 <- computeFEE(d_trait, d_comm, dis_metric = "manhattan", poolBased = TRUE)
+fee8 <- computeFEE(d_trait, d_comm, abundWeighted = FALSE, dis_metric = "manhattan", poolBased = TRUE)
+```
+```{r, fig.width = 6, fig.height = 6}
+fees <- cbind(fee1, fee2, fee3, fee4, fee5, fee6, fee7, fee8) # FEE under different parameters
+panel_ln <- function(x,y) {   # show the 1:1 line in the scatter-plots
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(-0.02, 1.02, -0.02, 1.02))
+  abline(0, 1, col = 2)
+  points(x, y)
+}
+pairs(fees, gap = 0.3, panel = panel_ln)
+```
+
+# Other Options
+There are three other parameters in `computeFEE` function. Their settings will not affect the calculation results, but might affect calculation speed (`user_ecdf` and `doParallel`) or expand output content (`doFEE0`).
+
+*  __`doFEE0`.__
+FEE calculation depends on the result of raw functional extension and evenness metric (FEE$_0$). This parameter determines whether including this intermediate result in the output (see the example below). The default is `FALSE`.
+
+```{r, results = "hide", message = FALSE}
+# calculate both FEE0 and FEE for comm2 and comm3
+fee1b <- computeFEE(d_trait, d_comm[2:3,], doFEE0 = TRUE)
+```
+```{r}
+fee1b
+```
+
+*  __`user_ecdf`.__
+FEE calculation depends on empirical cumulative distribution functions (eCDF) of FEE$_0$. An eCDF is derived from null communities either based on species pool (when `poolBased = TRUE`) or based on the assumption of no prior knowledge about trait distribution (refer to [Zhang et al. 2021](<https://doi.org/10.1002/ece3.7577>) for details).
+
+Some pre-calculated eCDFs under the assumption of no prior knowledge about trait distribution are enclosed in the `FEE` package. They cover the combination scenarios of species richness from 2 to 100, trait space dimension from 1 to 6, and two distance metrics (euclidean and manhattan). For other scenarios, especially species-pool-based calculation, eCDFs are not pre-calculated. If a path of file is specified in `user_ecdf`, the eCDFs that are not pre-calculated will be saved in that file after they are calculated for the first time. Thus, when calculating FEE for other communities under same eCDF conditions, time of generating eCDFs could be saved since the eCDFs in that file can be loaded and reused:
+  ```{r, results = "hide", message = FALSE}
+if(file.exists("ecdf_exp")) file.remove("ecdf_exp")
+str_fee4b <- "computeFEE(d_trait, d_comm, poolBased = TRUE, user_ecdf = \"ecdf_exp\")"
+str_fee6b <- "computeFEE(d_trait, d_comm, abundWeighted = FALSE, poolBased = TRUE, user_ecdf = \"ecdf_exp\")"
+t_fee4b <- system.time(eval(parse(text = str_fee4b)))   # calculate eCDFs from scratch and save them
+t_fee6b <- system.time(eval(parse(text = str_fee6b)))   # use saved eCDFs
+```
+As shown below, the second calculation is much faster because it reuses the eCDFs generated in the first calculation:
+  ```{r}
+rbind(summary(t_fee4b), summary(t_fee6b))
+```
+However, be aware that if `poolBased = TRUE`, eCDFs will be species-pool-specific. So a user needs to be careful in managing the files of eCDFs. Assigning a wrong file of eCDFs to `user_ecdf` (e.g., confusing file for X species pool with file for Y species pool) might result in false results of FEEs. And if `pool_traits` (traits of species pool) has any change (e.g., adding or removing species, including new traits or excluding old traits, and updating trait values for some species), the file for old eCDFs cannot be reused.
+
+*  __`doParallel`.__
+When the size of species pool is very large, the number of communities is very large, and/or the number of new eCDFs is very large, the calculation might take time if it is conducted sequentially (`doParallel = FALSE`, default). A user could save time by setting `doParallel = TURE` to conduct parallel computation. But the parallel backends available will be system-specific. The parallel computation depends on `foreach` function and %dopar% operator in R's `foreach` package. Refer to `?foreach::foreach` and `?parallel` for more details.
+
+# Other Functions
+Besides the wrapper function `computeFEE`, `FEE` package includes the following functions, which are called in `computeFEE` function or relevant to biodiversity measurement.
+
++  __`communityMST`.__
+Minimum spanning tree (MST) plays an important role in calculating FEE index. MST characterizes species' distribution of a community in trait space. Its branch lengths are used to calculate FEE$_0$ (refer to [Zhang et al. 2021](<https://doi.org/10.1002/ece3.7577>) for details). The `communityMST` function returns branch lengths of MST for a community:
+  
+  ```{r}
+# MST branch lengths of comm1, with and without species abundance considered
+br1a <- communityMST(d_comm[1,], d_trait)
+br1b <- communityMST(d_comm[1,], d_trait, abundWeighted = FALSE)
+rbind(br1a,br1b)
+```
+
++ __`computeNSP`.__
+As shown in the example at the beginning, this function returns species richness of communities.
++  __`FEE0_eCDF`.__
+Using a null model approach, this function builds eCDF of FEE$_0$ by calculating FEE$_0$ of a large number of null communities. These null communities all share same species richness, trait space, and species pool (or distribution of trait values). If `pool_traits` is not provided (default), the null models are generated under the assumption of no prior knowledge about trait values (species traits of null models are sampled from the uniform distribution). If `pool_traits` is specified, the null models are generated by randomly sampling species from the pool.
+
+```{r, results = "hide", message = FALSE}
+# build eCDF for the case of 4 species in 2D trait space
+ecdf_sp4a <- FEE0_eCDF(4, 2)                            # no prior knowledge of trait values
+ecdf_sp4b <- FEE0_eCDF(4, 2, pool_traits = d_trait)     # species pool is specified
+```
+
+FEE$_0$'s eCDF is served as a bridge to translate a raw FEE$_0$ metric into FEE index:
+
+```{r, fig.width = 4, fig.height = 2}
+# comm2 and comm3 have 4 species, so use them to illustrate the calculation
+fee0 <- fee1b$FEE0    # FEE0 of comm2 and comm3, see "fee1b" above
+cbind(FEE0 = fee0, FEEa = ecdf_sp4a(fee0), FEEb = ecdf_sp4b(fee0))
+par(mfrow = c(1,2), mar = c(2.8, 2.8, 0.2, 0.2), mgp = c(1.8,0.5,0))
+plot(ecdf_sp4a, xlab = "FEE0", ylab = "FEEa", main = "", pch = ".")
+points(fee0, ecdf_sp4a(fee0), pch = 19)
+plot(ecdf_sp4b, xlab = "FEE0", ylab = "FEEb", main = "", pch = ".")
+points(fee0, ecdf_sp4b(fee0), pch = 19)
+fee1b
+```
+
+It is worth pointing out that your outputs of `FEEa` and `FEEb` values might be not exactly same as the above ones. This is because in running `FEE0_eCDF` function, the factor of randomness in building null models could result in slightly different eCDFs every time.
+
+# Acknowledge
+Aditya Gaydhani participated in the early-stage development of this package.
