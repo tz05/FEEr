@@ -1,0 +1,39 @@
+---
+title: "testvign"
+author: "TZ"
+date: "4/22/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+* **`what`.** Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define 1
+* **`when`.** Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define 22222222222222222222.
+
+* **`how`.**
+  I do not know how. Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define yes.
+
+  ```{r cars}
+  summary(cars)
+  ```
+
+* **'who`.**
+  Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define Difficult to define no.
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
