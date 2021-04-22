@@ -68,13 +68,13 @@ plot(nsp, fee1, ylim = 0:1, yaxs = "i")
 
 A user might consider the following parameters (and questions) in calculating the FEE index:
 
-* **`abundWeighted`.**
+* __`abundWeighted`.__
   Do I consider abundance of the species in the calculation (default), or focus simply on species presence vs. absence (`abundWeighted = FALSE`)? 
 
-* **`dis_metric`.**
+* __`dis_metric`.__
   How do I quantify the distance (or dissimilarity) between two species in trait space? In the current version, traits can be continuous or ordinal. In the function, each trait is standardized into the 0-1 range and species distances are calculated based on the standardized trait values. The function currently supports two distance metric options: `euclidean` (default) and `manhattan`. In case of single trait (i.e., 1-dimensional trait space), the two options are equivalent. Refer to `?dist` for more information about the two options.
 
-* **`poolBased`.**
+* __`poolBased`.__
   Do I use traits of species pool (`pool_traits`) as the prior knowledge of trait distribution (`poolBased = TRUE`), or assume no prior knowledge about species trait distribution (default)?
 
 Different considerations in these parameters could result in different FEE results, as indicated in the following calculation and pair-wise scatter-plots:
@@ -101,7 +101,7 @@ pairs(fees, gap = 0.3, panel = panel_ln)
 # Other Options
   There are three other parameters in `computeFEE` function. Their settings will not affect the calculation results, but might affect calculation speed (`user_ecdf` and `doParallel`) or expand output content (`doFEE0`).
 
-* **`doFEE0`.**
+* __`doFEE0`.__
   FEE calculation depends on the result of raw functional extension and evenness metric (FEE$_0$). This parameter determines whether including this intermediate result in the output (see the example below). The default is `FALSE`.
 
   ```{r, results = "hide", message = FALSE}
@@ -112,7 +112,7 @@ pairs(fees, gap = 0.3, panel = panel_ln)
   fee1b
   ```
 
-* **`user_ecdf`.**
+* __`user_ecdf`.__
   FEE calculation depends on empirical cumulative distribution functions (eCDF) of FEE$_0$. An eCDF is derived from null communities either based on species pool (when `poolBased = TRUE`) or based on the assumption of no prior knowledge about trait distribution (refer to [Zhang et al. 2021](<https://doi.org/10.1002/ece3.7577>) for details).
 
   Some pre-calculated eCDFs under the assumption of no prior knowledge about trait distribution are enclosed in the `FEE` package. They cover the combination scenarios of species richness from 2 to 100, trait space dimension from 1 to 6, and two distance metrics (euclidean and manhattan). For other scenarios, especially species-pool-based calculation, eCDFs are not pre-calculated. If a path of file is specified in `user_ecdf`, the eCDFs that are not pre-calculated will be saved in that file after they are calculated for the first time. Thus, when calculating FEE for other communities under same eCDF conditions, time of generating eCDFs could be saved since the eCDFs in that file can be loaded and reused:
@@ -129,13 +129,13 @@ pairs(fees, gap = 0.3, panel = panel_ln)
   ```
   However, be aware that if `poolBased = TRUE`, eCDFs will be species-pool-specific. So a user needs to be careful in managing the files of eCDFs. Assigning a wrong file of eCDFs to `user_ecdf` (e.g., confusing file for X species pool with file for Y species pool) might result in false results of FEEs. And if `pool_traits` (traits of species pool) has any change (e.g., adding or removing species, including new traits or excluding old traits, and updating trait values for some species), the file for old eCDFs cannot be reused.
 
-* **`doParallel`.**
+* __`doParallel`.__
   When the size of species pool is very large, the number of communities is very large, and/or the number of new eCDFs is very large, the calculation might take time if it is conducted sequentially (`doParallel = FALSE`, default). A user could save time by setting `doParallel = TURE` to conduct parallel computation. But the parallel backends available will be system-specific. The parallel computation depends on `foreach` function and %dopar% operator in R's `foreach` package. Refer to `?foreach::foreach` and `?parallel` for more details.
   
 # Other Functions
   Besides the wrapper function `computeFEE`, `FEE` package includes the following functions, which are called in `computeFEE` function or relevant to biodiversity measurement.
 
-* **`communityMST`.**
+* __`communityMST`.__
   Minimum spanning tree (MST) plays an important role in calculating FEE index. MST characterizes species' distribution of a community in trait space. Its branch lengths are used to calculate FEE$_0$ (refer to [Zhang et al. 2021](<https://doi.org/10.1002/ece3.7577>) for details). The `communityMST` function returns branch lengths of MST for a community:
   
   ```{r}
@@ -145,10 +145,10 @@ pairs(fees, gap = 0.3, panel = panel_ln)
   rbind(br1a,br1b)
   ```
 
-* **`computeNSP`.**
+* __`computeNSP`.__
   As shown in the example at the beginning, this function returns species richness of communities.
 
-* **`FEE0_eCDF`.**
+* __`FEE0_eCDF`.__
   Using a null model approach, this function builds eCDF of FEE$_0$ by calculating FEE$_0$ of a large number of null communities. These null communities all share same species richness, trait space, and species pool (or distribution of trait values). If `pool_traits` is not provided (default), the null models are generated under the assumption of no prior knowledge about trait values (species traits of null models are sampled from the uniform distribution). If `pool_traits` is specified, the null models are generated by randomly sampling species from the pool.
   
   ```{r, results = "hide", message = FALSE}
