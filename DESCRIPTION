@@ -1,15 +1,15 @@
-Package: FEE
+Package: FEEr
 Type: Package
 Title: Functional Extension and Evenness (FEE) index from trait data
-Version: 0.4.6
+Version: 0.5.1
 Authors@R: c(
   person(given="Tao", family="Zhang", email="t.zhang05@outlook.com", role=c("aut","cre")),
   person(given="Aditya", family="Gaydhani", role="ctb"),
   person(given="Grant M.", family="Domke", role="ctb"),
   person(given="Matthew B.", family="Russell", role="ctb"),
   person(given="Jeremy W.", family="Lichstein", role="ctb"))
-URL: https://github.com/tz05/FEE
-BugReports: https://github.com/tz05/FEE/issues
+URL: https://github.com/tz05/FEEr
+BugReports: https://github.com/tz05/FEEr/issues
 Description: A package to calculate the functional extension and evenness 
   (FEE) index. This index measures functional diversity by evaluating the 
   overall extension of species traits and interspecific trait differences 
@@ -26,5 +26,4 @@ Suggests:
     markdown
 LazyData: true
 RoxygenNote: 7.1.1
-URL: github
 VignetteBuilder: knitr

@@ -2,7 +2,7 @@
 % Please edit documentation in R/fee_ind.R
 \name{computeNSP}
 \alias{computeNSP}
-\title{Species richness}
+\title{Calculate species richness}
 \usage{
 computeNSP(abund)
 }
@@ -17,4 +17,11 @@ Number of species in each of the communities specified in \code{abund}.
 }
 \description{
 Computes species richness (taxonomic diversity) for the communities specified in \code{abund}.
+}
+\examples{
+d_comm <- rbind(comm1 = c(0:9),
+                comm2 = rep(1, 10),
+                comm3 = runif(10, 0, 5),
+                comm4 = rchisq(10, 2))
+computeNSP(d_comm)
 }

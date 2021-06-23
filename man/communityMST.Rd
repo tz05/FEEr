@@ -32,9 +32,9 @@ distances are root sum-of-squares of differences, and manhattan distances
 are the sum of absolute differences.}
 }
 \value{
-If \code{abundWeighted} is \code{TRUE}, return both sorted branch
-  lengths of abundance-weighted MST and sum of branch lengths of raw MST. If
-  \code{abundWeighted} is \code{FALSE}, return sorted branch lengths of MST.
+If \code{abundWeighted} is \code{TRUE}, return sorted branch
+  lengths of abundance-weighted MST. If \code{abundWeighted} is \code{FALSE},
+  return sorted branch lengths of raw MST.
 }
 \description{
 Get branch length information of MST for the community specified in
@@ -42,4 +42,13 @@ Get branch length information of MST for the community specified in
 }
 \details{
 ...
+}
+\examples{
+d_trait <- cbind(tr1 = rnorm(10, 0, 1), tr2 = rnorm(10, 3, 2))
+comm1 = c(0:9)
+comm2 = rep(1, 10)
+communityMST(comm1, d_trait, abundWeighted = TRUE)
+communityMST(comm1, d_trait)
+communityMST(comm2, d_trait, abundWeighted = TRUE)
+communityMST(comm2, d_trait)
 }
