@@ -30,12 +30,18 @@ calculation is then under the assumption of no prior knowledge of trait
 values (i.e., uniform distribution of trait values).}
 }
 \value{
-The eCDF of FEE0, used to transfer FEE0 metrics to FEE values.
+The eCDF of FEE0, used to transfer FEE0 metric to FEE index
 }
 \description{
-Use null model approach to create empirical cumulative distribution function
+Use null model approach to generate empirical cumulative distribution function
 (eCDF) of FEE0.
 }
-\details{
-...
+\examples{
+d_trait <- cbind(tr1 = rnorm(10, 0, 1), tr2 = rnorm(10, 3, 2))
+ecdf1 <- FEE0_eCDF(3, 4)
+ecdf1(1.5)
+ecdf2 <- FEE0_eCDF(9, 2, pool_traits = d_trait)
+ecdf3 <- FEE0_eCDF(9, 2)
+ecdf2(1.5)
+ecdf3(1.5)
 }
