@@ -1,7 +1,7 @@
 Package: FEEr
 Type: Package
 Title: Functional Extension and Evenness (FEE) index from trait data
-Version: 0.5.1
+Version: 0.5.2
 Authors@R: c(
   person(given="Tao", family="Zhang", email="t.zhang05@outlook.com", role=c("aut","cre")),
   person(given="Aditya", family="Gaydhani", role="ctb"),

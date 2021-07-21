@@ -87,6 +87,7 @@ computeFEE <- function(pool_traits, abund, dis_metric = c("euclidean","manhattan
   stopifnot(dis_metric %in% c("euclidean","manhattan"))
   
   num_traits <- ncol(pool_traits)
+  abund[is.na(abund)] <- 0
   nsp_comm <- computeNSP(abund)
   n_core_slurm <- as.integer(Sys.getenv("SLURM_CPUS_ON_NODE"))
   numCores <- parallel::detectCores()
@@ -220,6 +221,7 @@ computeFEE <- function(pool_traits, abund, dis_metric = c("euclidean","manhattan
 #' computeNSP(d_comm)
 #' @export
 computeNSP <- function(abund) {
+  abund[is.na(abund)] <- 0
   return(apply(abund,1,function(x) length(which(x>0))))
 }
 
@@ -267,6 +269,7 @@ coor_grids <- function(n,dim) {
 communityMST <- function(abund, spp_traits, abundWeighted = TRUE, dis_metric = c("euclidean","manhattan")) {
   dis_metric <- match.arg(dis_metric)
   abund <- as.vector(abund,mode="numeric")
+  abund[is.na(abund)] <- 0
   if(length(abund)==0|sum(abund)==0) return(list(NA,NA))
   stopifnot(length(abund) == nrow(spp_traits))
   stopifnot(sum(abund) > 0)
