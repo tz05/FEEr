@@ -1,0 +1,9 @@
+cff-version: 1.0
+authors:
+  - family-names: Zhang
+    given-names: Tao
+    orcid: https://orcid.org/0000-0001-7135-1762
+title: "FEEr: calculate Functional Extension and Evenness index"
+version: 0.5.2
+url: "https://github.com/tz05/FEEr.git"
+date-released: 2021-07-21
